@@ -1,7 +1,4 @@
-
-<div class="mdc-typography--body1" style="margin-left: 50px;">
-  <h3 class="mdc-typography--headline3">Most recent crimes:</h3>
-    <div id="cards">
+<div id="cards">
 
         <div class="card template" style="width: 18rem;display:none;float:left;height:300px;">
             <div class="card-body">
@@ -14,14 +11,12 @@
             </div>
         </div>
      </div>
-    
-</div>
+
+
 <script>
 $(document).ready(function() {
-    //https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2
-        var url = "https://data.cityofchicago.org/resource/ijzp-q8t2.json?$limit=5";
-      $.get(url, function(response) {
-      console.log(response);
+ $.get(url, function(response) {
+      
       var data = response;
       initMap(response);
       $.each(data, function(i,v){
@@ -48,11 +43,9 @@ $(document).ready(function() {
         // insert into DOM
         $("#cards").append(clone);
 
-          });
+      });
 
     
-      }); 
-    
-        
+      });
 });
 </script>

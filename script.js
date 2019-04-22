@@ -2,9 +2,9 @@ var navItems = [
   {"label": "About", "screen": "about", "icon": "info"},
   {"label": "Resources", "screen": "resources", "icon": "library_books"},
   "divider",
-  {"label": "Search Bus", "screen": "search", "icon": "search"},
-  {"label": "Bus Times", "screen": "times", "icon": "list"},
-  {"label": "Map", "screen": "map", "icon": "map"}
+  {"label": "Search Crimes", "screen": "search", "icon": "search"},
+  {"label": "Crime List", "screen": "list", "icon": "list"},
+  {"label": "Map of Crimes", "screen": "map", "icon": "map"}
  
 ];
 
@@ -76,7 +76,9 @@ function loadDrawerNavigationElements(navItems) {
  * @param {string} screenName - name to load, without _
  */
 function loadScreen(screenName) {
+    $("#mapdiv").hide();
   $("#content").load("./screen-content/_" + screenName + ".html", function () {
+      
     console.log("------ Screen load: " + screenName);
 });
 

@@ -6,12 +6,25 @@
 	<meta name="viewport" content="width=device-width">
   	<meta name="google-signin-client_id" content="455879692718-31a814ua0ch6tal2errkrtf4976ckq1h.apps.googleusercontent.com">
 
-	<title>CTA Bus Times</title>
+	<title>Chicago Crimes</title>
 	<link rel="manifest" href="./manifest.json">
 	
 	<link rel="stylesheet" href="https://unpkg.com/material-components-web@0.40.0/dist/material-components-web.min.css" />
 	<link href="style.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	 crossorigin="anonymous">
+    
+    <style>
+    
+        #mapdiv {
+			display: none;
+		}
+       #map {
+        height: 600px;  /* The height is 400 pixels */
+        width: 100%;  /* The width is the width of the web page */
+       }
+    </style>
 </head>
 
 <body>
@@ -20,7 +33,8 @@
 		<div class="mdc-top-app-bar__row">
 			<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
 				<a href="#" class="material-icons mdc-top-app-bar__navigation-icon">menu</a>
-				<span class="mdc-top-app-bar__title">CTA Bus Times</span>
+				<span class="mdc-top-app-bar__title">Chicago Crimes</span>
+                <span style="margin-left:10px" id="temper"></span>
 			</section>
 		</div>
 	</header>
@@ -40,6 +54,9 @@
 	<div id="contentArea">
     <div class="mdc-top-app-bar--fixed-adjust"></div>
     <div id="content" class="mdc-typography--body1"></div>
+    <div id="mapdiv">
+        <div id="map"></div>
+      </div>
   </div>
 	
   
@@ -66,9 +83,88 @@
     console.log('Registration failed with ' + error);
   });
 }
-  </script>
+  var type = "";
+  var district = "";
+  var date = "";
+  var arrest;
+      
+  var url = "";
+      
+// Initialize and add the map
+var markers = [];
+function initMap(data) {
+
+  // The map, centered at Uluru
+  var map = new google.maps.Map(
+      document.getElementById('map'), {zoom: 14, center: {lat: 41.881, lng: -87.623}});
+    
+  createMarkers(map, data);
+
+}
+
+  function createMarkers (map, data) {
+   var iconBase = 'https://maps.google.com/mapfiles/kml/paddle/';
+    $.each(data, function(i,v) {
+
+      var location = new google.maps.LatLng(parseFloat(v.latitude),parseFloat(v.longitude));
+    
+      map.setCenter(location);  
+      
+      var marker;
+      if(v.arrest == true){
+          marker = new google.maps.Marker({map: map, position: location, icon: iconBase + 'grn-stars.png'});
+      }
+      else {
+          marker = new google.maps.Marker({map: map, position: location});
+      }
+  
+      var contentWin = "<h5>" + v.case_number + "</h5>" +
+                "<h6>" + v.date + "</h6>" +
+                "<p><b>Block:</b> " + v.block+ "</p>" +
+                "<p><b>Crime:</b> " + v.primary_type+ "</p>" +
+                "<p>" + v.description+ "</p>";
+   
+      var infowindow = new google.maps.InfoWindow({
+        content: contentWin
+      });
+
+      marker.addListener('click', function() {
+        infowindow.open(map, marker);
+      });
+      markers.push(marker);
+  
+    });
+
+  }
+function DeleteMarkers() {
+        //Loop through all the markers and remove
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        markers = [];
+    };
+
+    </script>
+     <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDa4dMSOASs_iLQnhrPoQ8EZgj2Im_pZ7o">
+    </script>
 
 
 </body>
-
 </html>
+<script>
+$(document).ready(function() {
+//b59df216461617486a3458300eff3aef
+    url = "https://api.openweathermap.org/data/2.5/weather?appid=b59df216461617486a3458300eff3aef&q=Chicago&units=imperial";
+    $.get(url, function(response) {
+      var data = response;
+        $.each(data, function(i,v){
+            if(i == 'main'){
+                console.log(v.temp);
+                $("#temper").html("Temperature: " + v.temp + " F");
+            }
+            
+        });
+    });
+});
+</script>

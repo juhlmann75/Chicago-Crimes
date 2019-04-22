@@ -1,31 +1,51 @@
-<div id="screenContent">
-  <h3 class="mdc-typography--headline3">Search</h3>
-  <select name="route">
-      
-    </select>  
-    
+<div id="screenContent" style="padding:50px;">
+    <h3 class="mdc-typography--headline3">Search</h3>
+    <!---arrest, district, date --->
+    <table>
+         <tr>
+            <td style="padding-right:30px;margin-bottom:20px;"><b>Date:</b>(required)</td>
+            <td><input type="date" id="date1"> - <input type="date" id="date2"></td>
+        </tr>
+        <tr>
+            <td><b>District:</b></td>
+            <td><input type="text" id="district" placeholder="District"></td>
+        </tr>
+        <tr>
+            <td><b>Arrested</b></td>
+            <td><input type="checkbox" id="arrest" value="1"></td>
+        </tr>
+    </table>
+
+  
+  <input type="button" value="Search" id="searchButton">
   
 </div>
-
 <script>
+$(document).ready(function() {
+    //https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2
+        var endpoint = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
+          
+         $("#searchButton").on("click", function() {
+             //endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json";
+              DeleteMarkers();
+             $(".result").remove();
+             
+             district = $("#district").val();
+             date1 = $("#date1").val();
+             date2 = $("#date2").val();
+             
+             url = endpoint + "?$where=date between '" + date1 + "' and '" + date2 + "'&$limit=100";
+    
+             if ($('#arrest').is(':checked')) {
+                 url += "&$where=arrest=true";
+             }
+             if(district != ''){
+                 url += "&district=" + district;
+             }
+             console.log(url);
+             $("#content").load("./screen-content/_list.html");
+            
 
-var endpoint = "http://www.ctabustracker.com/bustime/api/v2/getroutes?key=BSTBRvB3Jy3SrghMRQCc86dBV";
-
-$.get(endpoint, function(response) {
-  $.each(response, function(i,v) {
-      
-      console.log(v);
-    /*var clone = $("#screenContent li.template").clone();
-    clone.find(".mdc-list-item__primary-text").text(v.name);
-    clone.find(".mdc-list-item__secondary-text").text(v.department);
-    clone.removeClass("template");
-    clone.attr("id", v.name);
-    $("#screenContent ul").append(clone);  */
-
-  });
-  $("#loading").hide();
-});
-
-
-
+          });
+         });
 </script>
