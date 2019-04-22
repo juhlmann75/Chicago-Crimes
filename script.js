@@ -77,7 +77,7 @@ function loadDrawerNavigationElements(navItems) {
  */
 function loadScreen(screenName) {
     $("#mapdiv").hide();
-  $("#content").load("./screen-content/_" + screenName + ".html", function () {
+  $("#content").load("./screen-content/" + screenName + ".html", function () {
       
     console.log("------ Screen load: " + screenName);
 });
