@@ -1,12 +1,12 @@
 {
-  "name": "My Cool App",
-  "short_name": "My Cool App",
+  "name": "Chicago Crimes",
+  "short_name": "Chicago Crimes",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "navy",
   "description": "A sample PWA",
   "icons": [{
-    "src": "./warning.png",
+    "src": "./crime.png",
     "sizes": "256x256",
     "type": "image/png"
   }],
