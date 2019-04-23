@@ -1,3 +1,5 @@
+
+
 <div id="screenContent" style="padding:50px;">
     <h3 class="mdc-typography--headline3">Search</h3>
     <!---arrest, district, date --->
@@ -18,15 +20,22 @@
 
   
   <input type="button" value="Search" id="searchButton">
+    <br>
+    <h3>Recent Searches:</h3>
+    <ul class="list-group" id="searchList" style="margin-top:10px;">
+        
+      </ul>
   
 </div>
 <script>
+    var removeId = 0;
 $(document).ready(function() {
     //https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2
         var endpoint = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
-          
+        
          $("#searchButton").on("click", function() {
              //endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json";
+             
               DeleteMarkers();
              $(".result").remove();
              
@@ -34,18 +43,53 @@ $(document).ready(function() {
              date1 = $("#date1").val();
              date2 = $("#date2").val();
              
-             url = endpoint + "?$where=date between '" + date1 + "' and '" + date2 + "'&$limit=100";
+             if(removeId > 0){
+                 db.searches.delete(removeId);
+             }
+             db.searches.put({date1: date1, date2: date2, district: district});
+          
+               refreshView();
+             
+             url = endpoint + "?$where=date between '" + date1 + "' and '" + date2 + "'";
     
              if ($('#arrest').is(':checked')) {
-                 url += "&$where=arrest=true";
+                 url += " and arrest=true";
              }
              if(district != ''){
                  url += "&district=" + district;
              }
+             url += "&$limit=100";
              console.log(url);
              $("#content").load("./screen-content/list.html");
             
 
           });
          });
+
+      //
+      // Define your database
+      //
+      var db = new Dexie("search_database");
+      db.version(1).stores({
+          searches: '++id,date1, date2, district'
+      });
+      db.open().then(refreshView);
+       
+      function refreshView() {
+        $("#searchList").empty();
+        db.searches.each(function(searches){
+            document.getElementById("searchList").innerHTML += "<li class='list-group-item' id="+ searches.id +" onclick='view("+searches.id+")'>" + searches.date1 + " to " + searches.date2 + "<br><b>District:</b> " + searches.district + "</li>";
+          });
+      }
+
+      function view(id){
+          removeId = id;
+          var desc = db.searches.get(id, function(search){
+             document.getElementById("date1").value = search.date1;
+              document.getElementById("date2").value = search.date2;
+              document.getElementById("district").value = search.district;
+            
+          });
+      }   
+  
 </script>
