@@ -15,8 +15,9 @@
 
 <script>
 $(document).ready(function() {
+
  $.get(url, function(response) {
-      
+     
       var data = response;
       initMap(response);
       $.each(data, function(i,v){
